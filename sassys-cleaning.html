@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sassy's Cleaning — Console Internal Cleaning</title>
+<meta name="description" content="Professional Xbox, PlayStation & Nintendo internal cleaning. Cut temperatures, kill fan noise, extend console life. DM to book.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#14161A;
+    --surface:#1C1F26;
+    --surface-2:#22262F;
+    --line:#2C313C;
+    --hot:#FF6B35;
+    --cool:#3ADBC4;
+    --text:#EDEFF2;
+    --muted:#8B92A0;
+    --radius:10px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',system-ui,sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+  }
+  .mono{
+    font-family:'JetBrains Mono',monospace;
+  }
+  a{color:inherit;text-decoration:none;}
+  img{max-width:100%;display:block;}
+  .wrap{
+    max-width:1120px;
+    margin:0 auto;
+    padding:0 24px;
+  }
+  :focus-visible{
+    outline:2px solid var(--cool);
+    outline-offset:3px;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important;}
+  }
+
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:rgba(20,22,26,0.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px 24px;
+    max-width:1120px;
+    margin:0 auto;
+  }
+  .logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:18px;
+    letter-spacing:-0.01em;
+  }
+  .logo-mark{
+    width:28px;height:28px;
+    border-radius:6px;
+    background:linear-gradient(135deg,var(--hot),var(--cool));
+    flex-shrink:0;
+  }
+  nav ul{
+    list-style:none;
+    display:flex;
+    gap:32px;
+  }
+  nav ul a{
+    font-size:14px;
+    color:var(--muted);
+    transition:color 0.2s;
+  }
+  nav ul a:hover{color:var(--text);}
+  .nav-cta{
+    display:inline-block;
+    background:var(--text);
+    color:var(--bg);
+    font-size:14px;
+    font-weight:600;
+    padding:9px 18px;
+    border-radius:999px;
+    transition:transform 0.15s ease, background 0.2s;
+  }
+  .nav-cta:hover{background:var(--cool); transform:translateY(-1px);}
+  .nav-links-mobile{display:none;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding:88px 0 96px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1.1fr 0.9fr;
+    gap:64px;
+    align-items:center;
+  }
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    color:var(--cool);
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    margin-bottom:20px;
+  }
+  .eyebrow::before{
+    content:'';
+    width:6px;height:6px;
+    border-radius:50%;
+    background:var(--cool);
+    box-shadow:0 0 10px var(--cool);
+  }
+  .hero h1{
+    font-size:clamp(36px,5vw,58px);
+    line-height:1.04;
+    margin-bottom:22px;
+  }
+  .hero h1 .accent{
+    background:linear-gradient(90deg,var(--hot),var(--cool));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .hero p.lead{
+    font-size:17px;
+    color:var(--muted);
+    max-width:46ch;
+    margin-bottom:32px;
+  }
+  .hero-actions{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:14px 26px;
+    border-radius:999px;
+    font-size:15px;
+    font-weight:600;
+    transition:transform 0.15s ease, box-shadow 0.2s;
+    border:1px solid transparent;
+    cursor:pointer;
+  }
+  .btn-primary{
+    background:var(--hot);
+    color:#0F0F10;
+  }
+  .btn-primary:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 24px rgba(255,107,53,0.35);
+  }
+  .btn-ghost{
+    border-color:var(--line);
+    color:var(--text);
+  }
+  .btn-ghost:hover{
+    border-color:var(--cool);
+    color:var(--cool);
+  }
+
+  /* Thermal signature graphic */
+  .thermal-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:28px;
+  }
+  .thermal-card .cap{
+    display:flex;
+    justify-content:space-between;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    margin-bottom:18px;
+  }
+  .thermal-readout{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    margin-bottom:10px;
+  }
+  .temp-block{text-align:center;}
+  .temp-num{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:40px;
+    font-weight:700;
+    line-height:1;
+  }
+  .temp-num.hot{color:var(--hot);}
+  .temp-num.cool{color:var(--cool);}
+  .temp-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--muted);
+    margin-top:6px;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+  }
+  .temp-arrow{
+    font-size:20px;
+    color:var(--muted);
+    padding-bottom:14px;
+  }
+  .thermal-bar{
+    height:10px;
+    border-radius:999px;
+    background:linear-gradient(90deg,var(--hot) 0%, #C9A15A 35%, var(--cool) 100%);
+    position:relative;
+    margin:22px 0 8px;
+    overflow:hidden;
+  }
+  .thermal-bar::after{
+    content:'';
+    position:absolute;
+    top:0; left:0; bottom:0;
+    width:38%;
+    background:var(--surface);
+    right:0;
+    left:auto;
+    animation:sweep 3.5s ease-in-out infinite;
+  }
+  @keyframes sweep{
+    0%,100%{width:62%;}
+    50%{width:8%;}
+  }
+  .thermal-foot{
+    display:flex;
+    justify-content:space-between;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    color:var(--muted);
+  }
+
+  /* ---------- SECTION SHARED ---------- */
+  section{padding:88px 0;}
+  .section-head{
+    max-width:56ch;
+    margin-bottom:52px;
+  }
+  .section-head .eyebrow{margin-bottom:14px;}
+  .section-head h2{
+    font-size:clamp(26px,3.4vw,36px);
+    margin-bottom:12px;
+  }
+  .section-head p{
+    color:var(--muted);
+    font-size:15.5px;
+  }
+  .divider{
+    border:none;
+    border-top:1px solid var(--line);
+  }
+
+  /* ---------- PLATFORMS / SERVICES ---------- */
+  .platforms{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+  }
+  .platform-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:28px 26px;
+    transition:border-color 0.2s, transform 0.2s;
+  }
+  .platform-card:hover{
+    border-color:var(--cool);
+    transform:translateY(-4px);
+  }
+  .platform-icon{
+    width:44px;height:44px;
+    border-radius:10px;
+    background:var(--surface-2);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:18px;
+    font-size:20px;
+  }
+  .platform-card h3{
+    font-size:18px;
+    margin-bottom:8px;
+  }
+  .platform-card p{
+    color:var(--muted);
+    font-size:14px;
+    margin-bottom:16px;
+  }
+  .tag-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .tag{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--cool);
+    background:rgba(58,219,196,0.08);
+    border:1px solid rgba(58,219,196,0.25);
+    padding:4px 10px;
+    border-radius:999px;
+  }
+
+  /* ---------- PROCESS (real sequence, numbered legitimately) ---------- */
+  .process{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:0;
+    border:1px solid var(--line);
+    border-radius:16px;
+    overflow:hidden;
+  }
+  .process-step{
+    padding:30px 26px;
+    border-right:1px solid var(--line);
+    position:relative;
+    background:var(--surface);
+  }
+  .process-step:last-child{border-right:none;}
+  .process-step .step-num{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    color:var(--hot);
+    margin-bottom:14px;
+    display:block;
+  }
+  .process-step h3{
+    font-size:15px;
+    margin-bottom:8px;
+  }
+  .process-step p{
+    font-size:13px;
+    color:var(--muted);
+  }
+
+  /* ---------- WHY / STATS ---------- */
+  .why-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+  }
+  .why-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:24px 26px;
+    display:flex;
+    gap:16px;
+  }
+  .why-icon{
+    font-size:22px;
+    flex-shrink:0;
+  }
+  .why-card h3{
+    font-size:15px;
+    margin-bottom:6px;
+  }
+  .why-card p{
+    font-size:13.5px;
+    color:var(--muted);
+  }
+
+  /* ---------- PRICING ---------- */
+  .pricing{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+  }
+  .price-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:30px 26px;
+    display:flex;
+    flex-direction:column;
+  }
+  .price-card.featured{
+    border-color:var(--hot);
+    background:linear-gradient(180deg, rgba(255,107,53,0.06), var(--surface) 60%);
+  }
+  .price-card .plat{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    color:var(--muted);
+    margin-bottom:10px;
+  }
+  .price-card h3{
+    font-size:20px;
+    margin-bottom:4px;
+  }
+  .price-card .from{
+    font-size:12px;
+    color:var(--muted);
+    margin-bottom:20px;
+  }
+  .price-card ul{
+    list-style:none;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-bottom:24px;
+    flex-grow:1;
+  }
+  .price-card li{
+    font-size:13.5px;
+    color:var(--text);
+    display:flex;
+    gap:8px;
+  }
+  .price-card li::before{
+    content:'✓';
+    color:var(--cool);
+    font-weight:700;
+    flex-shrink:0;
+  }
+
+  /* ---------- BOOKING / CONTACT ---------- */
+  .booking{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:56px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:56px;
+  }
+  .booking-info h2{
+    font-size:clamp(24px,3vw,32px);
+    margin-bottom:14px;
+  }
+  .booking-info p{
+    color:var(--muted);
+    font-size:15px;
+    margin-bottom:24px;
+  }
+  .booking-info .socials{
+    display:flex;
+    gap:12px;
+  }
+  .social-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:11px 18px;
+    border:1px solid var(--line);
+    border-radius:999px;
+    font-size:13.5px;
+    font-weight:600;
+    transition:border-color 0.2s, color 0.2s;
+  }
+  .social-btn:hover{border-color:var(--cool); color:var(--cool);}
+  form{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .field label{
+    display:block;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    color:var(--muted);
+    margin-bottom:7px;
+  }
+  .field input,
+  .field select,
+  .field textarea{
+    width:100%;
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:12px 14px;
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    transition:border-color 0.2s;
+  }
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus{
+    border-color:var(--cool);
+    outline:none;
+  }
+  .field textarea{resize:vertical; min-height:80px;}
+  .row-2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+  }
+  .submit-btn{
+    background:var(--hot);
+    color:#0F0F10;
+    border:none;
+    padding:14px;
+    border-radius:8px;
+    font-size:14.5px;
+    font-weight:700;
+    cursor:pointer;
+    margin-top:6px;
+    transition:transform 0.15s ease, box-shadow 0.2s;
+  }
+  .submit-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 24px rgba(255,107,53,0.3);
+  }
+  .form-note{
+    font-size:12px;
+    color:var(--muted);
+    text-align:center;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    border-top:1px solid var(--line);
+    padding:36px 0;
+  }
+  .footer-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:16px;
+  }
+  .footer-row p{
+    font-size:13px;
+    color:var(--muted);
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:900px){
+    .hero-grid{grid-template-columns:1fr; gap:44px;}
+    .platforms{grid-template-columns:1fr;}
+    .process{grid-template-columns:1fr 1fr;}
+    .process-step{border-right:1px solid var(--line); border-bottom:1px solid var(--line);}
+    .why-grid{grid-template-columns:1fr;}
+    .pricing{grid-template-columns:1fr;}
+    .booking{grid-template-columns:1fr; padding:32px 24px;}
+    nav ul{display:none;}
+  }
+  @media (max-width:520px){
+    .process{grid-template-columns:1fr;}
+    .row-2{grid-template-columns:1fr;}
+    .hero{padding:56px 0 64px;}
+    section{padding:64px 0;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a href="#top" class="logo">
+      <span class="logo-mark"></span>
+      Sassy's Cleaning
+    </a>
+    <ul>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#process">Process</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+    </ul>
+    <a href="#booking" class="nav-cta">Book now</a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">Console internal cleaning</span>
+        <h1>Your console is <span class="accent">running hot.</span><br>We fix that.</h1>
+        <p class="lead">Dust-clogged fans push your Xbox, PlayStation or Switch into thermal throttling — louder, slower, and closer to failure. Full internal strip-down and clean brings temps back down where they belong.</p>
+        <div class="hero-actions">
+          <a href="#booking" class="btn btn-primary">Book a clean →</a>
+          <a href="#services" class="btn btn-ghost">See what's included</a>
+        </div>
+      </div>
+      <div class="thermal-card">
+        <div class="cap">
+          <span>Fan noise + internal temp</span>
+          <span>Live estimate</span>
+        </div>
+        <div class="thermal-readout">
+          <div class="temp-block">
+            <div class="temp-num hot">78°</div>
+            <div class="temp-label">Before</div>
+          </div>
+          <div class="temp-arrow">→</div>
+          <div class="temp-block">
+            <div class="temp-num cool">52°</div>
+            <div class="temp-label">After clean</div>
+          </div>
+        </div>
+        <div class="thermal-bar"></div>
+        <div class="thermal-foot">
+          <span>DUST-CLOGGED</span>
+          <span>OPTIMAL AIRFLOW</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- SERVICES -->
+  <section id="services">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Platforms covered</span>
+        <h2>Every major console, done properly</h2>
+        <p>Same process underneath — full teardown, compressed air and brush clean of every heatsink and fan blade, thermal paste check, and a rebuild with the internals actually inspected, not just wiped down.</p>
+      </div>
+      <div class="platforms">
+        <div class="platform-card">
+          <div class="platform-icon">🎮</div>
+          <h3>Xbox</h3>
+          <p>Series X/S and Xbox One. Fan and heatsink strip, vent clearing, APU repaste on request.</p>
+          <div class="tag-row">
+            <span class="tag">Series X</span>
+            <span class="tag">Series S</span>
+            <span class="tag">One</span>
+          </div>
+        </div>
+        <div class="platform-card">
+          <div class="platform-icon">🕹️</div>
+          <h3>PlayStation</h3>
+          <p>PS5 and PS4/Pro. Full internal dust removal, blower fan clean, dashboard noise fix.</p>
+          <div class="tag-row">
+            <span class="tag">PS5</span>
+            <span class="tag">PS4</span>
+            <span class="tag">PS4 Pro</span>
+          </div>
+        </div>
+        <div class="platform-card">
+          <div class="platform-icon">🔴</div>
+          <h3>Nintendo</h3>
+          <p>Switch and Switch OLED. Careful teardown, vent and fan clean, dock port check.</p>
+          <div class="tag-row">
+            <span class="tag">Switch</span>
+            <span class="tag">OLED</span>
+            <span class="tag">Lite</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS (genuine sequence) -->
+  <section id="process">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">How a booking works</span>
+        <h2>Four steps, drop-off to collection</h2>
+        <p>The order matters here — this is the actual sequence your console goes through.</p>
+      </div>
+      <div class="process">
+        <div class="process-step">
+          <span class="step-num mono">01</span>
+          <h3>DM to book</h3>
+          <p>Send platform and model over Instagram. You'll get a time slot and price back same day.</p>
+        </div>
+        <div class="process-step">
+          <span class="step-num mono">02</span>
+          <h3>Drop-off</h3>
+          <p>Hand over the console at the agreed time. Takes two minutes — no need to bring cables.</p>
+        </div>
+        <div class="process-step">
+          <span class="step-num mono">03</span>
+          <h3>Full teardown clean</h3>
+          <p>Case opened, fans and heatsinks cleared, internals inspected, everything rebuilt properly.</p>
+        </div>
+        <div class="process-step">
+          <span class="step-num mono">04</span>
+          <h3>Collection</h3>
+          <p>You're notified when it's ready — most cleans are done within 24 hours.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- WHY -->
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Why bother</span>
+        <h2>What a clogged console is actually doing to your gear</h2>
+      </div>
+      <div class="why-grid">
+        <div class="why-card">
+          <span class="why-icon">🌡️</span>
+          <div>
+            <h3>Overheating</h3>
+            <p>Dust-packed heatsinks trap heat around the CPU/GPU, forcing the console to throttle performance to stop itself cooking.</p>
+          </div>
+        </div>
+        <div class="why-card">
+          <span class="why-icon">🔊</span>
+          <div>
+            <h3>Fan noise</h3>
+            <p>Fans spin harder to compensate for blocked airflow — that jet-engine sound is the console fighting its own dust.</p>
+          </div>
+        </div>
+        <div class="why-card">
+          <span class="why-icon">⏳</span>
+          <div>
+            <h3>Shortened lifespan</h3>
+            <p>Sustained heat stress degrades thermal paste and solder joints over time — the leading cause of early console death.</p>
+          </div>
+        </div>
+        <div class="why-card">
+          <span class="why-icon">💷</span>
+          <div>
+            <h3>Cheaper than replacing</h3>
+            <p>A clean costs a fraction of a repair or a new console, and takes a day instead of weeks.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Pricing</span>
+        <h2>Straightforward, per console</h2>
+        <p>Exact price confirmed by DM once we know your model and condition — these are starting points.</p>
+      </div>
+      <div class="pricing">
+        <div class="price-card">
+          <span class="plat mono">Xbox</span>
+          <h3>Standard clean</h3>
+          <div class="from mono">From €25</div>
+          <ul>
+            <li>Full teardown</li>
+            <li>Fan + heatsink clean</li>
+            <li>Vent clearing</li>
+            <li>Rebuild + test</li>
+          </ul>
+        </div>
+        <div class="price-card featured">
+          <span class="plat mono">PlayStation</span>
+          <h3>Standard clean</h3>
+          <div class="from mono">From €25</div>
+          <ul>
+            <li>Full teardown</li>
+            <li>Blower fan clean</li>
+            <li>Dust and debris removal</li>
+            <li>Rebuild + test</li>
+            <li>Thermal paste check</li>
+          </ul>
+        </div>
+        <div class="price-card">
+          <span class="plat mono">Nintendo</span>
+          <h3>Standard clean</h3>
+          <div class="from mono">From €20</div>
+          <ul>
+            <li>Careful teardown</li>
+            <li>Fan + vent clean</li>
+            <li>Dock port check</li>
+            <li>Rebuild + test</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- BOOKING -->
+  <section id="booking">
+    <div class="wrap">
+      <div class="booking">
+        <div class="booking-info">
+          <span class="eyebrow">Get in touch</span>
+          <h2>Book your clean</h2>
+          <p>Fill in the form and it'll open a message ready to send — or DM straight away on Instagram.</p>
+          <div class="socials">
+            <a class="social-btn" href="https://instagram.com/sassyscleaningcom" target="_blank" rel="noopener">Instagram DM ↗</a>
+          </div>
+        </div>
+        <form id="bookingForm">
+          <div class="row-2">
+            <div class="field">
+              <label for="name">Name</label>
+              <input type="text" id="name" name="name" placeholder="Your name" required>
+            </div>
+            <div class="field">
+              <label for="platform">Console</label>
+              <select id="platform" name="platform" required>
+                <option value="">Select one</option>
+                <option>Xbox Series X/S</option>
+                <option>Xbox One</option>
+                <option>PS5</option>
+                <option>PS4 / Pro</option>
+                <option>Nintendo Switch</option>
+                <option>Switch OLED</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="contact">Email or phone</label>
+            <input type="text" id="contact" name="contact" placeholder="Best way to reach you" required>
+          </div>
+          <div class="field">
+            <label for="notes">Notes</label>
+            <textarea id="notes" name="notes" placeholder="Anything about noise, overheating, or when you're free"></textarea>
+          </div>
+          <button type="submit" class="submit-btn">Send booking request</button>
+          <p class="form-note">Opens your email app with everything filled in — nothing sends automatically.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap footer-row">
+    <p>© <span id="year"></span> Sassy's Cleaning · Console internal cleaning</p>
+    <p>DM to book · Xbox · PlayStation · Nintendo</p>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  document.getElementById('bookingForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const name = document.getElementById('name').value;
+    const platform = document.getElementById('platform').value;
+    const contact = document.getElementById('contact').value;
+    const notes = document.getElementById('notes').value;
+
+    const subject = encodeURIComponent('Console cleaning booking — ' + platform);
+    const body = encodeURIComponent(
+      'Name: ' + name + '\n' +
+      'Console: ' + platform + '\n' +
+      'Contact: ' + contact + '\n' +
+      'Notes: ' + (notes || 'None') + '\n'
+    );
+    window.location.href = 'mailto:hello@sassyscleaning.com?subject=' + subject + '&body=' + body;
+  });
+</script>
+
+</body>
+</html>
