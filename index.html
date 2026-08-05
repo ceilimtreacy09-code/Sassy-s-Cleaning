@@ -407,68 +407,90 @@
     <div class="wrap">
 
         <div class="section-head">
-            <span class="eyebrow">Simple Pricing</span>
+            <span class="eyebrow">Pricing</span>
             <h2>Professional Console Cleaning</h2>
-            <p>Fixed prices with no hidden fees.</p>
+            <p>Fixed prices. No hidden fees.</p>
         </div>
-
-        <div class="pricing">
+ /* ---------- Pricing heading ---------- */
+      <div class="pricing">
 
             <div class="price-card featured">
                 <span class="plat">NEW GENERATION</span>
-                <h3>€50</h3>
+                <h3>PlayStation 5 & Xbox Series</h3>
+                <div class="from">€50</div>
 
                 <ul>
-                    <li>✓ PlayStation 5</li>
-                    <li>✓ PlayStation 5 Slim</li>
-                    <li>✓ PlayStation 5 Pro</li>
-                    <li>✓ Xbox Series X</li>
-                    <li>✓ Xbox Series S</li>
-                    <li>✓ Internal dust removal</li>
-                    <li>✓ Full testing</li>
+                    <li>PlayStation 5</li>
+                    <li>PlayStation 5 Slim</li>
+                    <li>PlayStation 5 Pro</li>
+                    <li>Xbox Series X</li>
+                    <li>Xbox Series S</li>
                 </ul>
             </div>
 
             <div class="price-card">
                 <span class="plat">OLDER GENERATION</span>
-                <h3>€25</h3>
+                <h3>PlayStation 4 & Xbox One</h3>
+                <div class="from">€25</div>
 
                 <ul>
-                    <li>✓ PlayStation 4</li>
-                    <li>✓ PlayStation 4 Slim</li>
-                    <li>✓ PlayStation 4 Pro</li>
-                    <li>✓ Xbox One</li>
-                    <li>✓ Xbox One S</li>
-                    <li>✓ Xbox One X</li>
+                    <li>PlayStation 4</li>
+                    <li>PlayStation 4 Slim</li>
+                    <li>PlayStation 4 Pro</li>
+                    <li>Xbox One</li>
+                    <li>Xbox One S</li>
+                    <li>Xbox One X</li>
                 </ul>
             </div>
 
             <div class="price-card">
                 <span class="plat">CONTROLLERS</span>
-                <h3>€5</h3>
+                <h3>Controller Cleaning</h3>
+                <div class="from">€5</div>
 
                 <ul>
-                    <li>✓ Xbox Controller</li>
-                    <li>✓ PlayStation Controller</li>
+                    <li>Xbox Controller</li>
+                    <li>PlayStation Controller</li>
                 </ul>
             </div>
 
             <div class="price-card">
                 <span class="plat">NINTENDO</span>
                 <h3>Coming Soon</h3>
+                <div class="from">—</div>
 
                 <ul>
-                    <li>✓ Nintendo Switch</li>
-                    <li>✓ Nintendo Switch OLED</li>
-                    <li>✓ Nintendo Switch 2</li>
+                    <li>Nintendo Switch</li>
+                    <li>Nintendo Switch OLED</li>
+                    <li>Nintendo Switch 2</li>
                 </ul>
             </div>
 
         </div>
 
     </div>
-</section>
-  }
+</section> 
+  .pricing{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+}
+  .pricing{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+}
+
+@media(max-width:1100px){
+    .pricing{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:700px){
+    .pricing{
+        grid-template-columns:1fr;
+    }
+}
 
   /* ---------- BOOKING / CONTACT ---------- */
   .booking{
