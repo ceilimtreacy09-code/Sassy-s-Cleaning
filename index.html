@@ -490,7 +490,11 @@
               <option value="PS4 / Pro (€25)">PS4 / Pro — €25</option>
             </select>
           </div>
-          <div class="field field-full">
+          <div class="field">
+            <label for="cf-controllers">Controllers to clean</label>
+            <input type="number" id="cf-controllers" name="controllers" min="0" max="8" value="0">
+          </div>
+          <div class="field">
             <label for="cf-contact">Email or phone</label>
             <input type="text" id="cf-contact" name="contact" placeholder="Best way to reach you" required>
           </div>
@@ -501,7 +505,7 @@
         </div>
         <button type="submit" class="btn btn-primary contact-submit">Send booking request</button>
         <div class="contact-note">Opens your email app with everything filled in — nothing sends automatically.</div>
-        <div class="form-status" id="form-status">Your email app should now be open with your request pre-filled — just hit send.</div>
+        <div class="form-status" id="form-status"></div>
       </form>
     </div>
   </div>
@@ -542,6 +546,7 @@
 
     const name = document.getElementById('cf-name').value;
     const console_ = document.getElementById('cf-console').value;
+    const controllers = Math.max(0, Math.min(8, Number(document.getElementById('cf-controllers').value) || 0));
     const contact = document.getElementById('cf-contact').value;
     const message = document.getElementById('cf-message').value;
 
@@ -554,7 +559,7 @@
         email: isEmail ? contact : null,
         phone: isEmail ? null : contact,
         console_type: console_,
-        controllers: 0
+        controllers: controllers
       }]);
 
     if (error) {
@@ -565,6 +570,7 @@
     const body =
       'Name: ' + name + '\n' +
       'Console: ' + console_ + '\n' +
+      'Controllers: ' + controllers + '\n' +
       'Best contact: ' + contact + '\n' +
       'Notes: ' + (message || '—');
 
@@ -573,7 +579,19 @@
       + '&body=' + encodeURIComponent(body);
 
     window.location.href = mailto;
-    formStatus.classList.add('show');
+
+    // Fallback: if no default mail app took over the page, show the details
+    // inline so they can copy/WhatsApp/DM it instead of losing the booking.
+    setTimeout(function(){
+      if (document.hasFocus()) {
+        formStatus.textContent =
+          'Saved! If your email app didn\'t open, just send us this: ' +
+          subject + ' — ' + body.replace(/\n/g, ' | ');
+      } else {
+        formStatus.textContent = 'Your email app should now be open with your request pre-filled — just hit send.';
+      }
+      formStatus.classList.add('show');
+    }, 1200);
   });
 </script>
 
