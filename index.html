@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sassy's Cleaning — Console Internal Cleaning</title>
 <meta name="description" content="Professional Xbox & PlayStation internal cleaning in Dublin. Cut temperatures, reduce fan noise, remove dust buildup, and extend console life. DM to book.">
+<link rel="icon" type="image/jpeg" href="logo.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -289,6 +290,34 @@
   footer{ border-top:1px solid var(--line); padding:40px 0; }
   .footer-row{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; }
   .footer-row .muted{ color:var(--muted); font-size:13px; }
+
+  /* ---------- COOKIE CONSENT ---------- */
+  .cookie-banner{
+    position:fixed; left:0; right:0; bottom:0; z-index:100;
+    background:var(--surface); border-top:1px solid var(--line);
+    padding:18px 24px; box-shadow:0 -8px 24px rgba(0,0,0,0.35);
+    transform:translateY(120%); transition:transform 0.3s ease;
+  }
+  .cookie-banner.show{ transform:translateY(0); }
+  .cookie-inner{
+    max-width:1120px; margin:0 auto;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:20px; flex-wrap:wrap;
+  }
+  .cookie-text{ font-size:13.5px; color:var(--muted); max-width:64ch; }
+  .cookie-text a{ color:var(--cool); text-decoration:underline; }
+  .cookie-actions{ display:flex; gap:10px; flex-shrink:0; }
+  .cookie-btn{
+    padding:10px 20px; border-radius:999px; font-size:13.5px; font-weight:600;
+    cursor:pointer; border:1px solid var(--line); font-family:'Inter',sans-serif;
+  }
+  .cookie-accept{ background:var(--cool); color:#0F0F10; border-color:transparent; }
+  .cookie-decline{ background:transparent; color:var(--text); }
+  @media (max-width:600px){
+    .cookie-inner{ flex-direction:column; align-items:flex-start; }
+    .cookie-actions{ width:100%; }
+    .cookie-btn{ flex:1; text-align:center; }
+  }
 </style>
 </head>
 <body>
@@ -296,6 +325,7 @@
 <header>
   <nav>
     <div class="logo">
+      <img src="logo.jpg" alt="Sassy's Cleaning logo" class="logo-mark">
       Sassy's Cleaning
     </div>
     <div class="nav-links">
@@ -514,6 +544,7 @@
 <footer>
   <div class="wrap footer-row">
     <div class="footer-logo">
+      <img src="logo.jpg" alt="Sassy's Cleaning logo">
       Sassy's Cleaning
     </div>
     <span class="muted">DM to book · Xbox &amp; PlayStation only</span>
@@ -597,6 +628,39 @@
       formStatus.classList.add('show');
     }, 1200);
   });
+</script>
+
+<div class="cookie-banner" id="cookie-banner">
+  <div class="cookie-inner">
+    <div class="cookie-text">
+      This site doesn't use tracking or advertising cookies. See our <a href="cookies.html">Cookie Policy</a> for details.
+    </div>
+    <div class="cookie-actions">
+      <button class="cookie-btn cookie-decline" id="cookie-decline">Decline</button>
+      <button class="cookie-btn cookie-accept" id="cookie-accept">Got it</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function(){
+    var banner = document.getElementById('cookie-banner');
+    var accept = document.getElementById('cookie-accept');
+    var decline = document.getElementById('cookie-decline');
+    var stored = localStorage.getItem('sassy-cookie-consent');
+
+    if (!stored) {
+      setTimeout(function(){ banner.classList.add('show'); }, 600);
+    }
+
+    function dismiss(value){
+      localStorage.setItem('sassy-cookie-consent', value);
+      banner.classList.remove('show');
+    }
+
+    accept.addEventListener('click', function(){ dismiss('accepted'); });
+    decline.addEventListener('click', function(){ dismiss('declined'); });
+  })();
 </script>
 
 </body>
