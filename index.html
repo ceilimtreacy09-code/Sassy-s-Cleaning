@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sassy's Cleaning — Console Internal Cleaning</title>
+<link rel="icon" type="image/jpeg" href="logo.jpg">
 <meta name="description" content="Professional Xbox & PlayStation internal cleaning in Dublin. Cut temperatures, reduce fan noise, remove dust buildup, and extend console life. DM to book.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{
     --paper:#F1ECDB;
@@ -536,15 +536,10 @@
   consoleSelect.addEventListener('change', updateTotal);
   controllerQty.addEventListener('input', updateTotal);
 
-  const supabaseClient = supabase.createClient(
-    'https://ciwvcladlvmwmjajiavr.supabase.co',
-    'sb_publishable_EufYUjPUHBtbH776ThU_Cg_dZuXQBBP'
-  );
-
   const contactForm = document.getElementById('contact-form');
   const formStatus = document.getElementById('form-status');
 
-  contactForm.addEventListener('submit', async function(e){
+  contactForm.addEventListener('submit', function(e){
     e.preventDefault();
 
     const name = document.getElementById('cf-name').value;
@@ -552,22 +547,6 @@
     const controllers = Math.max(0, Math.min(8, Number(document.getElementById('cf-controllers').value) || 0));
     const contact = document.getElementById('cf-contact').value;
     const message = document.getElementById('cf-message').value;
-
-    const isEmail = contact.includes('@');
-
-    const { error } = await supabaseClient
-      .from('bookings')
-      .insert([{
-        name: name,
-        email: isEmail ? contact : null,
-        phone: isEmail ? null : contact,
-        console_type: console_,
-        controllers: controllers
-      }]);
-
-    if (error) {
-      console.error('Booking save failed:', error);
-    }
 
     const subject = 'Booking request — ' + console_;
     const body =
