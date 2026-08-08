@@ -517,6 +517,10 @@
       Sassy's Cleaning
     </div>
     <span class="muted">DM to book · Xbox &amp; PlayStation only</span>
+    <div class="footer-links" style="display:flex; gap:16px;">
+      <a href="privacy.html" style="color:var(--muted); font-size:13px;">Privacy Policy</a>
+      <a href="cookies.html" style="color:var(--muted); font-size:13px;">Cookie Policy</a>
+    </div>
   </div>
 </footer>
 
